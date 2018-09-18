@@ -50,11 +50,20 @@ public class cyclic {
                 multipliedHead = head.multiply(i, 0);
                 System.out.println(String.format("%s x %s = %s", nodeToString(head), i, nodeToString(multipliedHead)));
 
+                n = multipliedHead;
+                while (n != null) {
+                    n.head = multipliedHead;
+                    n = n.next;
+                }
+
                 boolean canCycle = false;
 
                 Node h = head;
                 Node mh = multipliedHead;
+                int k = 0;
                 while (h != null) {
+                    k += 1;
+                    System.out.println(String.format("Started check at index %s\nh: %s\nmh: %s", k, h.toString(), mh.toString()));
                     if (h.isCyclic(mh, 1, length)) {
                         canCycle = true;
                         break;
@@ -102,17 +111,15 @@ public class cyclic {
         }
 
         boolean isCyclic(Node curr, int i, int size) {
-            System.out.println(String.format("Checking %s %s %s", this.value, curr.value, i));
+            System.out.println(String.format("Checking this: %s, curr: %s, i: %s", this.value, curr.value, i));
             if (i == size) {
                 return true;
             } else {
                 if (value == curr.value) {
-                    if (next != null) {
-                        return next.isCyclic(curr.next, i + 1, size);
-                    } else {
-                        System.out.println("End of list; Wrapping to head");
-                        return head.isCyclic(curr.head, i + 1, size);
-                    }
+                    Node nextThis = this.next == null ? this.head : this.next;
+                    Node nextCurr = curr.next == null ? curr.head : curr.next;
+
+                    return nextThis.isCyclic(nextCurr, i + 1, size);
                 } else {
                     return false;
                 }
@@ -130,10 +137,10 @@ public class cyclic {
             }
             if (this.next == null) {
                 if (carry != 0) {
-                    this.next = new Node(1, null, this.head);
+                    this.next = new Node(1, null);
                     return this.next;
                 } else {
-                    return new Node(newValue, null, this.head);
+                    return new Node(newValue, null);
                 }
             }
             return new Node(newValue, next.multiply(n, carry), this.head);
@@ -145,4 +152,3 @@ public class cyclic {
         }
     }
 }
-
